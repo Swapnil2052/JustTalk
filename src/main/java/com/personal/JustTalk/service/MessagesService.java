@@ -27,7 +27,7 @@ public class MessagesService {
         message.setSender(user);
         message.setChats(chat);
         message.setTimestamp(LocalDateTime.now());
-        message.setDescription(messageContent);
+        message.setContent(messageContent);
         messagesRepository.save(message);
     }
 }

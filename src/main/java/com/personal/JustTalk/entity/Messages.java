@@ -21,7 +21,7 @@ public class Messages {
     private Long id;
 
     @Column(name = "description")
-    private String description;
+    private String content;
 
     @Column(name = "timestamp")
     private LocalDateTime timestamp;

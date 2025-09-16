@@ -2,6 +2,7 @@ package com.personal.JustTalk.service;
 
 import com.personal.JustTalk.dto.ChatRequestDTO;
 import com.personal.JustTalk.dto.ChatResponseDTO;
+import com.personal.JustTalk.dto.ChatResponseWithoutMessagesDTO;
 import com.personal.JustTalk.entity.Chats;
 import com.personal.JustTalk.entity.Users;
 import com.personal.JustTalk.repository.ChatsRepository;
@@ -32,17 +33,23 @@ public class ChatsService {
         chatsRepository.save(chat);
     }
 
-    @Transactional
-    public List<ChatResponseDTO> findAllChats(String username){
-        Users user=usersRepository.findByUsername(username).orElseThrow(()->new RuntimeException("User with such username doesn't exist"));
-        System.out.println("hey "+user.getChats());
-        return user.getChats().stream().map(chat -> modelMapper.map(chat, ChatResponseDTO.class)).toList();
+    @Transactional(readOnly = true)
+    public List<ChatResponseWithoutMessagesDTO> findAllChats(String username) {
+
+        //Here we need to get all the chats of user(one query), then for every chat, it needs to query to fetch participants and messages
+        //That means for every chat it would be 2 extra queries, so if user has 10 chats, it would be 21 queries in total i.e 2n+1 queries
+        //To avoid this n+1 problem, we will use JPQL with JOIN FETCH to fetch all the details in one query
+
+            List<Chats> chats = chatsRepository.findChatsByUsernameWithDetails(username);
+            return chats.stream()
+                    .map(chat -> modelMapper.map(chat, ChatResponseWithoutMessagesDTO.class))
+                    .toList();
     }
 
-    @Transactional(readOnly = true)
+
+    @Transactional
     public ChatResponseDTO getChatByID(Long id, String name) {
-        Users user=usersRepository.findByUsername(name).orElseThrow(()->new RuntimeException("User with such username doesn't exist"));
-        return user.getChats().stream().filter(chat->chat.getId().equals(id))
-                .map(chat -> modelMapper.map(chat, ChatResponseDTO.class)).findFirst().orElseThrow(()->new RuntimeException("User has no chat with particular id"));
+        Chats chat=chatsRepository.findChatByIdAndUsernameWithDetails(id,name).orElseThrow(()->new RuntimeException("Chat with such id doesn't exist or you don't have access to it"));
+        return modelMapper.map(chat,ChatResponseDTO.class);
     }
 }

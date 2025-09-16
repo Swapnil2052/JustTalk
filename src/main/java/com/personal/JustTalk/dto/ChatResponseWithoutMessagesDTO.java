@@ -12,11 +12,12 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatResponseDTO {
+public class ChatResponseWithoutMessagesDTO {
+
+    private Long id;
 
     private String chatName;
 
     private Set<UserResponseDTO> users;
 
-    private Set<MessagesContentDTO>messages;
 }

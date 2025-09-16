@@ -2,6 +2,7 @@ package com.personal.JustTalk.controller;
 
 import com.personal.JustTalk.dto.ChatRequestDTO;
 import com.personal.JustTalk.dto.ChatResponseDTO;
+import com.personal.JustTalk.dto.ChatResponseWithoutMessagesDTO;
 import com.personal.JustTalk.service.ChatsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +23,9 @@ public class ChatsController {
         return ResponseEntity.ok("Chat created");
     }
 
-    @RequestMapping("/")
-    public ResponseEntity<List<ChatResponseDTO>> getAllChats(Authentication authentication) {
-        List<ChatResponseDTO> chatsList= chatsService.findAllChats(authentication.getName());
+    @RequestMapping
+    public ResponseEntity<List<ChatResponseWithoutMessagesDTO>> getAllChats(Authentication authentication) {
+        List<ChatResponseWithoutMessagesDTO> chatsList= chatsService.findAllChats(authentication.getName());
         return ResponseEntity.ok(chatsList);
     }
 
