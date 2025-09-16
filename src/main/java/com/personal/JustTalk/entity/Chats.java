@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ public class Chats {
     private String chatName;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "chats")
+
     private Set<Messages> messages;
 
     @ManyToMany(fetch = FetchType.LAZY)

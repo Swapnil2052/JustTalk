@@ -1,11 +1,14 @@
 package com.personal.JustTalk.dto;
 
 import com.personal.JustTalk.entity.Messages;
+import jakarta.persistence.OrderBy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -18,5 +21,5 @@ public class ChatResponseDTO {
 
     private Set<UserResponseDTO> users;
 
-    private Set<MessagesContentDTO>messages;
+    private List<MessagesContentDTO> messages;
 }

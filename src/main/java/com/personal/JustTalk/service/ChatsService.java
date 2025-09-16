@@ -3,6 +3,7 @@ package com.personal.JustTalk.service;
 import com.personal.JustTalk.dto.ChatRequestDTO;
 import com.personal.JustTalk.dto.ChatResponseDTO;
 import com.personal.JustTalk.dto.ChatResponseWithoutMessagesDTO;
+import com.personal.JustTalk.dto.MessagesContentDTO;
 import com.personal.JustTalk.entity.Chats;
 import com.personal.JustTalk.entity.Users;
 import com.personal.JustTalk.repository.ChatsRepository;
@@ -12,8 +13,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +53,14 @@ public class ChatsService {
     @Transactional
     public ChatResponseDTO getChatByID(Long id, String name) {
         Chats chat=chatsRepository.findChatByIdAndUsernameWithDetails(id,name).orElseThrow(()->new RuntimeException("Chat with such id doesn't exist or you don't have access to it"));
-        return modelMapper.map(chat,ChatResponseDTO.class);
+        ChatResponseDTO chatResponseDTO= modelMapper.map(chat,ChatResponseDTO.class);
+        //manually sorting messages by timestamp as they are not coming sorted from DB, then converting to list of messages in ChatResponseDTO as set of messages in Chats doesn't guarantee order.
+        if(chatResponseDTO.getMessages()!=null) {
+           List<MessagesContentDTO>sortedMessages= chatResponseDTO.getMessages().stream()
+                    .sorted(Comparator.comparing(MessagesContentDTO::getTimestamp))
+                    .collect(Collectors.toList());
+            chatResponseDTO.setMessages(sortedMessages);
+        }
+        return chatResponseDTO;
     }
 }
