@@ -2,6 +2,8 @@ package com.personal.JustTalk.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -10,16 +12,20 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    int id;
+    private Long id;
 
     @Column(name = "displayname")
-    String displayName;
+    private String displayName;
 
     @Column(name = "username")
-    @NonNull
-    String username;
+    private String username;
 
     @Column(name = "password")
-    String password;
+    private String password;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "sender")
+    private Set<Messages> messages;
+
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private Set<Chats> chats;
 }
